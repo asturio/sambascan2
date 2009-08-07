@@ -1,0 +1,85 @@
+.\"                              hey, Emacs:   -*- nroff -*-
+.\" sambascan2 is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; see the file COPYING.  If not, write to
+.\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH SAMBASCAN2 1 "December 11, 2007"
+.\" Please update the above date whenever this man page is modified.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins (default)
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+sambascan2 \- This programm search windows shares (SMB, Samba) in a given network
+.SH SYNOPSIS
+.B sambascan2
+.RI [ options ]
+.SH DESCRIPTION
+\fBsambascan2\fP can search for Shares in a Windows Network (networks using the SMB protocol or Unix servers running Samba). After the shares are found the script try to list the contents of any public share, or use a given login and password to list the concents of password protected shares. It generates than an index of those files.
+.PP
+It also can search in the indexed files and show you where you can find a given file.
+.PP
+The indexed files and the temporary files will be stored in ~/.sambascan2. Please note that the account and password information will be stored in plaintext in the directory. So use these option with care.
+.SH OPTIONS
+\fBsambascan2\fP accepts the following options:
+.TP
+.B \-h, \-\-help, \-?
+Show summary of options.
+.TP
+.B \-o, \-\-oldhosts
+Re-scan all hosts where there were shares found.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-s, \-\-sname <name>
+Search in the index for a given file. May be used multiple times.
+.TP
+.B \-m, \-\-sizemin <size>
+Found files must be at least this large (bytes).
+.TP
+.B \-M, \-\-sizemax <size>
+Found files must be at most this large (bytes).
+.TP
+.B \-a, \-\-add <hostname> <user> <password> [ip] [share]
+Add a login to the logins list.
+.TP
+.B \-g, \-\-get <hostname> [ip]
+Get the login for a given host/share.
+.TP
+.B \-d, \-\-delete <hostname> [ip]
+Delete the login information for a given host.
+.TP
+.B \-l, \-\-listauth
+List all login information in the login-file.
+.TP
+.B \-n, \-\-nohome
+Don't scan the "home" share.
+.TP
+.B \-f, \-\-file <file>
+Scan hosts listet in file.
+.TP
+.B \-v, \-\-version
+Show version of program.
+.\" .SH "SEE ALSO"
+.\" .BR foo (1), 
+.\" .BR bar (1).
+.SH AUTHOR
+Claudio Andr\['e] Till Clemens <asturioweb@gmx.net>.
