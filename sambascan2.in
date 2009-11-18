@@ -40,7 +40,7 @@ AWK="@AWK@"
 EGREP="@EGREP@"
 TIMEOUT=300 # 5 min listing in a share
 
-function checkbinaries {
+function checkbinaries (){
     BAD=0
     for i in nmap smbclient
     do
@@ -56,7 +56,7 @@ function checkbinaries {
     [ $BAD -gt 0 ] && echo "Some Binaries not found... exiting" && exit 1
 }
 
-function parseparameters {
+function parseparameters (){
     [ -n "$DEBUG" ] && echo "Parsing parameters"
     OLDS=0
     MINSIZE=0
@@ -171,7 +171,7 @@ function showAuths {
     echo ""
     echo "List of logins"
     echo "=============="
-    cut -f 1 -d"%" $PASSWORD
+    [ -f $PASSWORD ] && cut -f 1 -d"%" $PASSWORD
 }
 
 function searchfiles {
@@ -212,7 +212,9 @@ function mytimeout {
 # $1 = ip, $2 = name
 function list_shares {
     myauth=`getAuth $2 $1`
-    SHARES=`smbclient -L $1 -N -U $myauth 2> /dev/null | $EGREP "^[[:blank:]]+[^[:blank:]]+[[:blank:]]+Disk[[:blank:]]+" | $SED "s/^[[:blank:]]\+\([^[:blank:]]\+\).*/\1/g" | $EGREP -v "(ADMIN|IPC)\\\\$"`
+    # till Version 0.4.1 : SHARES=`smbclient -L $1 -N -U $myauth 2> /dev/null | $EGREP "^[[:blank:]]+[^[:blank:]]+[[:blank:]]+Disk[[:blank:]]+" | $SED "s/^[[:blank:]]\+\([^[:blank:]]\+\).*/\1/g" | $EGREP -v "(ADMIN|IPC)\\\\$"`
+    SHARES=`smbclient -L $1 -N -U $myauth 2> /dev/null | $EGREP "\<Disk\>" | \
+        $SED -e "s/^[[:blank:]]\+\(\<.\+[^[:blank:]]\)[[:blank:]]*Disk.*/\1/g" -e "s/ /%20/g" | $EGREP -v "(ADMIN|IPC)\\\\$"`
     SHARES=`echo $SHARES`
     if [ "$SHARES" ]
     then
