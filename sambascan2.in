@@ -286,7 +286,7 @@ function getlistofhosts {
     then
         if [ "$READFILE" ]
         then
-            echo "Scanning Hosts from fil ==> $READFILE <=="
+            echo "Scanning hosts listed in file ==> $READFILE <=="
         else
             echo "Getting list of hosts from net ==> $* <=="
         fi
@@ -334,7 +334,7 @@ $0 usage:
 
     -n --nohome     Don't process home-directories
 
-    -f --file       Read IP from file.
+    -f --file       Read IPs from file.
                     Parameters: <filename>
     
     -v --version    Show version of the Program.
