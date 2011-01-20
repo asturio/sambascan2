@@ -2,7 +2,7 @@
 #
 # sambascan2.sh - searches a network for SMB-Shares and list them.
 
-# Copyright 2002-2007 (c) Claudio Clemens
+# Copyright 2002-2011 (c) Claudio Clemens
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +20,8 @@
 # TODO: Option for creating listing
 # TODO: Isn't nmap to agresive?
 
-# The line below is an alternative to the sed, but if we perl, then if should be all in perl :)
+# The line below is an alternative to the sed, but if we perl, then if should
+# be all in perl :)
 # perl -pe "s/^(.*?[^ ]) + [AHRSD]* *  ([0-9]+)  [A-Za-z]+ [A-Za-z]+ +[0-9]+
 # [0-9:]+ [0-9]+$/\1:\2/" samba/127.0.0.1-HALFLING-Film.txt | less
 
@@ -36,7 +37,7 @@ LTEMP1=$WORKDIR/list1.temp.$$
 LTEMP2=$WORKDIR/list2.temp.$$
 SED="/bin/sed"
 GREP="/bin/grep"
-AWK="gawk"
+AWK="mawk"
 EGREP="/bin/grep -E"
 TIMEOUT=300 # 5 min listing in a share
 
@@ -344,8 +345,13 @@ EOF
 }
 
 function getoldhosts {
-    HOSTS=`(cd $WORKDIR; ls [0-9]* | cut -f 1 -d"-")`
-    [ -n "$DEBUG" ] && echo "Scanning hosts: $HOSTS"
+    HOSTS=`(cd $WORKDIR; ls [0-9]* 2> /dev/null | cut -f 1 -d"-")`
+    if [ "$HOSTS" ] 
+    then
+        [ -n "$DEBUG" ] && echo "Scanning hosts: $HOSTS"
+    else
+        echo "There is no old hosts to scan anymore."
+    fi
 }
 
 function process_host {
