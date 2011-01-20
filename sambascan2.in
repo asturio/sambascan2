@@ -2,7 +2,7 @@
 #
 # sambascan2.sh - searches a network for SMB-Shares and list them.
 
-# Copyright 2002-2007 (c) Claudio Clemens
+# Copyright 2002-2011 (c) Claudio Clemens
 
 # This program is free software; you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
