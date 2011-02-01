@@ -17,31 +17,29 @@
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# TODO: Option for creating listing
 # TODO: Isn't nmap to agresive?
+# TODO: rename sambascan2.in in sambascan2.sh and make in configure.ac this as input for sambascan2
 # TODO: Multithreading
-
-# The line below is an alternative to the sed, but if we perl, then if should
-# be all in perl :)
-# perl -pe "s/^(.*?[^ ]) + [AHRSD]* *  ([0-9]+)  [A-Za-z]+ [A-Za-z]+ +[0-9]+
-# [0-9:]+ [0-9]+$/\1:\2/" samba/127.0.0.1-HALFLING-Film.txt | less
+# TODO: Add share auth support.
+# TODO: Use sqlite
 
 #set -x
 
 VERSION=0.5.0
+PACKAGE=sambascan2
+AUTHOR="Claudio Clemens"
 DEBUG=YES
 NOHOME=0
+NOHIDDEN=0
 WORKDIR=$HOME/.sambascan2
 PASSWORD=$WORKDIR/logins.txt
-TTEMP=$WORKDIR/temp.temp.$$
-LTEMP1=$WORKDIR/list1.temp.$$
-LTEMP2=$WORKDIR/list2.temp.$$
 SED="/bin/sed"
 GREP="/bin/grep"
 AWK="mawk"
 EGREP="/bin/grep -E"
 TIMEOUT=300 # 5 min listing in a share
 INFOLEVEL=2  # 0 quiet/error, 1 warn, 2 info, 3 debug
+LEVEL=${INFOLEVEL}
 
 function display() {
     LEVEL=$1
@@ -49,10 +47,10 @@ function display() {
     REST="$@"
     if [ -n "$LEVEL" -a "$LEVEL" -le "$INFOLEVEL" ]
     then
-        [ $LEVEL -eq 0 ] && echo -n "[ERROR] " 1>&2 
-        [ $LEVEL -eq 1 ] && echo -n "[WARN] " 1>&2
-        [ $LEVEL -eq 2 ] && echo -n "[INFO] " 
-        [ $LEVEL -eq 3 ] && echo -n "[DEBUG] " 
+        [ "$LEVEL" -eq 0 ] && echo -n "[ERROR] " 1>&2 
+        [ "$LEVEL" -eq 1 ] && echo -n "[ WARN] " 1>&2
+        [ "$LEVEL" -eq 2 ] && echo -n "[ INFO] " 
+        [ "$LEVEL" -eq 3 ] && echo -n "[DEBUG] " 
         if [ $LEVEL -lt 2 ]
         then
             echo $REST 1>&2
@@ -83,11 +81,12 @@ function parseparameters (){
     MINSIZE=0
     MAXSIZE=0
 
-    # TODO Test arg with more than one argument. -a -g -d
-    args=`getopt -n $0 -o ohvlns:m:M:f:V:g:d:a: \
-        -l oldhosts,help,version,listauth,nohome,sname:,sizemin:,sizemax:,file:,verbose:,get:,delete:,add: \
+    args=`getopt -n $PACKAGE -o hvV:of:nHs:m:M:a:g:d:l \
+        -l help,version,verbose:,oldhosts,file:,nohome,nohidden,sname:,sizemin:,sizemax:,add:,get:,delete:,listauth \
         -- "$@"`
+
     [ $? -eq 0 ] || displayhelp
+
     eval set -- "$args"
 
     while [ "$1" ]
@@ -118,15 +117,15 @@ function parseparameters (){
                 shift
                 ;;
             -a|--add)
-                addAuth $1 $2 $3 $4 $5
+                addAuth $1
                 exit
                 ;;
             -g|--get)
-                getAuth $1 $2
+                getAuth $1
                 exit
                 ;;
             -d|--delete)
-                deleteAuth $1 $2
+                deleteAuth $1
                 exit
                 ;;
             -l|--listauth)
@@ -136,17 +135,25 @@ function parseparameters (){
             -n|--nohome)
                 NOHOME=1
                 ;;
+            -H|--nohidden)
+                NOHIDDEN=1
+                ;;
             -f|--file)
                 READFILE=$1
                 shift
                 ;;
             -v|--version)
-                echo $VERSION
+                echo "$PACKAGE $VERSION by $AUTHOR"
                 exit 0
                 ;;
             -V|--verbose)
-                INFOLEVEL=$1
-                shift 
+                if [[ "$1" =~ ^[0-9]+$ ]]
+                then
+                    INFOLEVEL=$1
+                    shift 
+                else
+                    display 1 "$1 is not a number"
+                fi
                 ;;
             --) 
                 break
@@ -154,9 +161,11 @@ function parseparameters (){
         esac
     done
     NETS="$@"
-    display 2 "Options o:$OLDS s:$SEARCH m:$MINSIZE M:$MAXSIZE n:$NOHOME f:$READFILE V:$INFOLEVEL"
-    display 2 "Nets: $NETS"
+
+    display 3 "Options o:$OLDS s:$SEARCH m:$MINSIZE M:$MAXSIZE n:$NOHOME f:$READFILE V:$INFOLEVEL H:$NOHIDDEN"
     [ "$SEARCH" ] && searchfiles
+
+    display 2 "Nets: $NETS"
     if [ -z "$NETS" -a $OLDS -eq 0 -a -z "$READFILE" ]
     then
         display 1 "Please give a host or net you want to scan."
@@ -165,38 +174,48 @@ function parseparameters (){
 }
 
 function addAuth {
-    myhost=$1
-    myuser=$2
-    mypass=$3
-    myip=$4     # opt
-    myshare=$5  # opt
+    myhost=`echo "$1" | cut -f 1 -d :`
+    myuserpass=`echo "$1" | cut -s -f 2 -d :`
+    myrest=`echo "$1" | cut -s -f 3- -d :`
+    if [ -z "$myhost" -o -z "$myuserpass" -o -z "$myrest" ]
+    then
+        display 0 "Please give all parameters in form like 
+            <hostname>:<user>%<password>:[ip]:[share]"
+        exit 1
+    fi
 
+    display 3 "Adding password for '$myhost' (for ip:share => '$myrest')" 
     if (! $GREP -i "^$myhost:" $PASSWORD > /dev/null 2>&1)
     then
         touch $PASSWORD
         chmod 600 $PASSWORD
-        echo "$myhost:$myip:$myshare:$myuser%$mypass" >> $PASSWORD
+        echo "$myhost:$myrest:$myuserpass" >> $PASSWORD
     fi
 }
 
 function getAuth {
-    myhost=$1
-    myip=$2
+    myhost=`echo $1 |cut -f 1 -d:`
+    myip=`echo $1 |cut -s -f 2 -d:`
     myauth=`$GREP -i "^$myhost:" $PASSWORD 2> /dev/null | cut -f 4 -d:`
-    if [ "x$myauth" == "x" ]
+    if [ "x$myauth" == "x" -a -n "$myip" ]
     then
         myauth=`$GREP -i "^[^:]*:$myip:" $PASSWORD 2> /dev/null | cut -f 4 -d:`
-        if [ "x$myauth" == "x" ]
-        then
-            myauth='User%'
-        fi
+    fi
+    if [ "x$myauth" == "x" ]
+    then
+        myauth=`$GREP "^\*:" $PASSWORD 2> /dev/null | cut -f 4 -d:`
+    fi
+
+    if [ "x$myauth" == "x" ]
+    then
+        myauth='User%'
     fi
     echo $myauth
 }
 
 function deleteAuth {
-    myhost=$1
-    myip=$2
+    myhost=`echo $1 |cut -f 1 -d:`
+    myip=`echo $1 |cut -s -f 2 -d:`
     touch $PASSWORD.tmp
     chmod 600 $PASSWORD.tmp
     $GREP -v -i "^$myhost:" $PASSWORD > $PASSWORD.tmp
@@ -233,7 +252,6 @@ function searchfiles {
             fi
         fi
     done
-    # TODO [ "$LINE" ] || display 2 "Nothing found"
 
     exit 0
 }
@@ -241,50 +259,60 @@ function searchfiles {
 function initialize {
     checkbinaries;
     [ -d "$WORKDIR" ] || mkdir $WORKDIR || display 1 "WARNING: Workdir couldn't be created!"
-    find $WORKDIR -mtime +15 -name "[0-9]*.txt.gz" | (while read a; do echo "$a" expired && rm -f "$a"; done)
+    find $WORKDIR -mtime +15 -name "[0-9]*.txt.gz" | (while read a; do display 2 "$a expired. deleting." && rm -f "$a"; done)
 }
 
 # $1 = ip, $2 = share, $3 = name
-function mytimeout {
-    myauth=`getAuth $3 $1`
+function scanShareWithTimeout {
+    myauth=`getAuth $3:$1`
     smbclient "//$1/$2" -c "recurse;ls" -N -U $myauth -d0 -D . > "$TTEMP" 2> /dev/null &
     MYPID=$!
-    (sleep $TIMEOUT && kill $MYPID 2> /dev/null > /dev/null) &
-    wait $MYPID 2> /dev/null > /dev/null
+    (sleep $TIMEOUT && kill $MYPID > /dev/null 2>&1) &
+    wait $MYPID > /dev/null 2>&1
 }
 
 # $1 = ip, $2 = name
 function list_shares {
-    myauth=`getAuth $2 $1`
-    # till Version 0.4.1 : SHARES=`smbclient -L $1 -N -U $myauth 2> /dev/null | $EGREP "^[[:blank:]]+[^[:blank:]]+[[:blank:]]+Disk[[:blank:]]+" | $SED "s/^[[:blank:]]\+\([^[:blank:]]\+\).*/\1/g" | $EGREP -v "(ADMIN|IPC)\\\\$"`
-    SHARES=`smbclient -L $1 -N -U $myauth 2> /dev/null | $EGREP "\<Disk\>" | \
+    MYIP=$1
+    MYNAME=$2
+    myauth=`getAuth ${MYNAME}:${MYIP}`
+    SHARES=`smbclient -L ${MYIP} -N -U "$myauth" 2> /dev/null | $EGREP "\<Disk\>" | \
         $SED -e "s/^[[:blank:]]\+\(\<.\+[^[:blank:]]\)[[:blank:]]*Disk.*/\1/g" -e "s/ /%20/g" | $EGREP -v "(ADMIN|IPC)\\\\$"`
     SHARES=`echo $SHARES`
     if [ "$SHARES" ]
     then
-        display 2 " ... Working on $2: ($SHARES)."
-        for i in $SHARES
+        display 2 "= Host ${MYNAME}: ($SHARES)."
+        LTEMP2=$WORKDIR/$MYIP-tmp.$$
+        for MYSHARE in $SHARES
         do
-            if (echo $myauth | $GREP "^$i%" > /dev/null)
+            LTEMP1=$WORKDIR/$MYIP-$MYSHARE-tmp.$$
+            TTEMP=$LTEMP1.raw
+            if (echo '$myauth' | $GREP "^$MYSHARE%" > /dev/null)
             then
-                [ $NOHOME -eq 1 ] && continue
+                [ $NOHOME -eq 1 ] && display 3 ".... share -($MYSHARE)... home." && continue
+            fi
+
+            if (echo $MYSHARE | grep "\$$" > /dev/null)
+            then
+                [ $NOHIDDEN -eq 1 ] && display 3 ".... share -($MYSHARE)... hidden." && continue
             fi
 
             # Here we change the SPACES back.
-            i=`echo "$i" | $SED -e "s/%20/ /g"`
-            if [ -n "$i" ]
+            MYSHARE=`echo "$MYSHARE" | $SED -e "s/%20/ /g"`
+            if [ -n "$MYSHARE" ]
             then
-                mymsg="     Listing +($i)"
-                # Because there can be some Password-shares we send stderr to null
-                mytimeout "$1" "$i" "$2" 2> /dev/null
+                mymsg=".... share +($MYSHARE)"
+                # Because there can be some Password-shares we send stderr to
+                # null
+                scanShareWithTimeout "${MYIP}" "$MYSHARE" "${MYNAME}" 2> /dev/null
                 if ($EGREP "(ERRbadpw|ACCESS_DENIED|WRONG_PASSWORD|BAD_NETWORK_NAME)" "$TTEMP" > /dev/null)
                 then
-                    mymsg="$mymsg... no access."
+                    display 2 "$mymsg... no access."
                     rm "$TTEMP"
                     continue
                 elif [ `wc -l < "$TTEMP"` -le 4 ]
                 then
-                    mymsg="$mymsg... empty."
+                    display 3 "$mymsg... empty."
                     rm "$TTEMP"
                     continue
                 fi
@@ -295,8 +323,9 @@ function list_shares {
                 "$TTEMP" | $GREP -v "login successful" > "$LTEMP1"
                 rm "$TTEMP"
 
-                # Now format the list the way we want
-                # Because we need to read each line, it is a big overhead, and scanning takes now longer
+                # Now format the list the way we want.
+                # Because we need to read each line, it is a big overhead, and
+                # scanning takes now longer
                 PATHNAME=/
                 NOTHING=1
                 while read a
@@ -307,19 +336,19 @@ function list_shares {
                         PATHNAME="$a"/
                     else
                         NOTHING=0
-                        echo "$1:$i:${PATHNAME}:${a}"
+                        echo "${MYIP}:$MYSHARE:${PATHNAME}:${a}"
                     fi
                 done < $LTEMP1 >> "$LTEMP2"
-                [ $NOTHING -eq 1 ] && echo "$1:$i:${PATHNAME}:" >> "$LTEMP2"
+                [ $NOTHING -eq 1 ] && echo "${MYIP}:$MYSHARE:${PATHNAME}:" >> "$LTEMP2"
                 rm "$LTEMP1"
                 display 2 "$mymsg... done."
             fi
         done
-        [ -s "$LTEMP2" ] && mv "$LTEMP2" "$WORKDIR/$1-$2.txt"
+        [ -s "$LTEMP2" ] && mv "$LTEMP2" "$WORKDIR/${MYIP}-${MYNAME}.txt"
         rm -f "$LTEMP2"
-        [ -e "$WORKDIR/$1-$2.txt" ] && gzip -f "$WORKDIR/$1-$2.txt"
+        [ -e "$WORKDIR/${MYIP}-${MYNAME}.txt" ] && gzip -f "$WORKDIR/${MYIP}-${MYNAME}.txt"
     else
-        display 3 "  ... No Shares."
+        display 3 "= Host $MYNAME ($MYIP): no shares."
     fi
     #reset -Q
 }
@@ -346,52 +375,60 @@ function getlistofhosts {
 
 function displayhelp {
 cat << EOF
+$PACKAGE usage:
 
-$0 usage:
+    $PACKAGE [options] [network]
 
-    $0 [command] [network]
-
-    Commands:
+    Options:
     -h --help       This help
+    -v --version    Show version of the Program.
+    -V --verbose    Set the verbose level: 0=quiet/error, 1=warn, 2=info,
+                    3=debug 
+                    Parameters: <level>
+
     -o --oldhosts   Scan all already indexed hosts
+    -f --file       Read IPs from file.
+                    Parameters: <filename>
+    -n --nohome     Don\'t process home-directories
+    -H --nohidden   Don\'t process hidden shares (like C$)
+
     -s --sname      Search indexed files (may be used multiple times)
     -m --sizemin    By the search, display only files with size greater or
                     equal to this (bytes)
     -M --sizemax    By the search, display only files with size smaller or
                     equal to this (bytes)
+
     -a --add        Add Login data to database. Note that data will be saved as
                     plaintext.
-                    Parameters: <hostname> <user> <password> [ip] [share].
+                    Parameters: <hostname>:<user>%<password>:[ip]:[share]
+                    ex. LOCALHOST:user%password::               <- Minimal
+                        LOCALHOST:user%password:127.0.0.1:share <- Full
+                    special Catchall (try this user and password for all):
+                        *:user%password::
                     Note: Share Auth is not supported by now
     -g --get        Get the Login data for a host.
-                    Parameters: <hostname> [ip]
+                    Parameters: <hostname>:[ip]
     -d --delete     Delete Login data for a host.
-                    Parameters: <hostname> [ip]
+                    Parameters: <hostname>:[ip]
     -l --listauth   List all auth data (without password)
-    -n --nohome     Don't process home-directories
-    -f --file       Read IPs from file.
-                    Parameters: <filename>
-    -v --version    Show version of the Program.
-    -V --verbose    Set the verbose level: 0=quiet/error, 1=warn, 2=info, 3=debug 
-                    Parameters: <level>
 EOF
     exit
 }
 
 function getoldhosts {
     HOSTS=`(cd $WORKDIR; ls [0-9]* 2> /dev/null | cut -f 1 -d"-")`
+    HOSTS=`echo $HOSTS`
     if [ "$HOSTS" ] 
     then
         [ -n "$DEBUG" ] && echo "Scanning hosts: $HOSTS"
     else
-        echo "There is no old hosts to scan anymore."
+        display 1 "There is no old hosts to scan anymore."
     fi
 }
 
 function process_host {
         NAME=`nmblookup -A $1 | $GREP "-" | head -1 | cut -f 1 -d"<"`
         NAME=`echo $NAME`
-        display 3 "Host: $NAME ($1)"
 # Only Modify this section, if you know what you are doing.
 # Insert your ACTION code here (e.g. scan for viruses)
 # I will only list the shares
@@ -404,7 +441,7 @@ parseparameters $@
 
 if [ $INFOLEVEL -ge 2 ]
 then
-    echo "sambascan2 Version: $VERSION (c) Claudio Clemens"
+    echo "sambascan2 Version: $VERSION (c) $AUTHOR"
     echo
     echo "sambascan2 comes with ABSOLUTELY NO WARRANTY; for details"
     echo "see the file COPYING.  This is free software, and you are welcome"

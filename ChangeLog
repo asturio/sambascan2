@@ -1,3 +1,26 @@
+2011-02-01 Claudio André Till Clemens <asturio@gmx.net>
+	* sambascan2.in: Final changes for 0.5.0. Comment and code cleanup.
+	More todos added in code. Added package and author variables. Use
+	single files for scanning (first step to threaded scan?). Output
+	tweaked. Added option for skipping hidden shares. Added support for
+	generic password. Better parsing of verbosity level. Parsing of
+	password/auth options rewriten: Fixes bug introduced with getopts.
+	Help and options synced.
+	* ChangeLog: Updated.
+	* NEWS: Updated.
+	* sambascan2.1: Updated.
+
+2011-01-31 Claudio André Till Clemens <asturio@gmx.net>
+	* all: Lots ot changes not writen in the changelog by now. From r6-r15
+	* sambascan2.in: Updated year in copyright. Todos added. display
+	function added. Output now with display function. Using getopt (intro-
+	duced many bugs with auth options). Added argument for verbose level.
+	Many changes in the output. Changed nmap options. Bug fixed for old
+	host.
+	* Makefile.am: Added debian targets.
+	* configure.ac: Changed version to 0.5.0. Regenerated autotool files.
+	* sambascan2.1: Corrected typos in manpage. Added infos for -V.
+
 2009-11-18 Claudio André Till Clemens <asturio@gmx.net>
         * sambascan2.in: Corrected Typo. Fixed finding share-names with spaces,
           fixed "-l" with empty file.

@@ -13,7 +13,7 @@
 .\" along with this program; see the file COPYING.  If not, write to
 .\" the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 .\"
-.TH SAMBASCAN2 1 "December 11, 2007"
+.TH SAMBASCAN2 1 "February 01, 2011"
 .\" Please update the above date whenever this man page is modified.
 .\"
 .\" Some roff macros, for reference:
@@ -40,11 +40,26 @@ The indexed files and the temporary files will be stored in ~/.sambascan2. Pleas
 .SH OPTIONS
 \fBsambascan2\fP accepts the following options:
 .TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-v, \-\-version
+Show version of program.
+.TP
+.B \-V, \-\-verbose
+Sets the verbosity level of sambascan. 0=quiet/error, 1=warn, 2=info, 3=debug.
+.TP
 .B \-o, \-\-oldhosts
 Re-scan all hosts where there were shares found.
 .TP
-.B \-h, \-\-help
-Show summary of options.
+.B \-f, \-\-file <file>
+Scan hosts listed in file.
+.TP
+.B \-n, \-\-nohome
+Don't scan the "home" shares.
+.TP
+.B \-H, \-\-nohidden
+Don't scan the "hidden" shares.
 .TP
 .B \-s, \-\-sname <name>
 Search in the index for a given file. May be used multiple times.
@@ -66,18 +81,6 @@ Delete the login information for a given host.
 .TP
 .B \-l, \-\-listauth
 List all login information in the login-file.
-.TP
-.B \-n, \-\-nohome
-Don't scan the "home" share.
-.TP
-.B \-f, \-\-file <file>
-Scan hosts listed in file.
-.TP
-.B \-v, \-\-version
-Show version of program.
-.TP
-.B \-V, \-\-verbose
-Sets the verbosity level of sambascan. 0=quiet/error, 1=warn, 2=info, 3=debug.
 .\" .SH "SEE ALSO"
 .\" .BR foo (1), 
 .\" .BR bar (1).
