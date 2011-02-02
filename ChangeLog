@@ -1,7 +1,10 @@
 2011-02-02 Claudio André Till Clemens <asturio@gmx.net>
 	* sambascan2.in: More todos added. Removed "DEBUG" Variable. Better
-	handling of shares with spaces. Count old hosts.
+	handling of shares with spaces. Count old hosts. Added Date to output.
+	Code cleanup. Kill stale sleeps.
 	* debian/changelog: Updated version number.
+	* configure.ac: Update version to -dev
+	* ChangeLog: Updated.
 
 2011-02-01 Claudio André Till Clemens <asturio@gmx.net>
 	* sambascan2.in: Final changes for 0.5.0. Comment and code cleanup.
