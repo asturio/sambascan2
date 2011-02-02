@@ -1,0 +1,26 @@
+Sambascan2
+===========
+
+Sambascan is a tool for scaning Samba (SMB) windows shares in a given network
+
+FAQ Version as of 24.05.2005
+=============================
+Q: Sambascan2 doesn't seem to scan through directories. Why that? It's a Bug?
+A: You are probably trying to scan in a private share. sambascan2 was only
+    written to scan in public shares and not in private ones (this may change
+    with the time). Another issue is that it is possible, that the Share have a
+    directory with other permissions than the one neede to access it. Check the
+    permission of the wanted directory, and if Samba can access it as the
+    public user.
+
+Edited (2007-05-17): With version 0.4.0 you can add login information to
+sambascan2. It is not a very elegant way of scanning password protected shares,
+but it is one way. Note that the password will be save as plaintext and that
+anyone logged in your computer could discover that password at runtime using: 
+
+ps -ef | grep smbclient
+
+At the moment I don't know how to solve this "ps -ef" issue. Don't exitate in
+telling me a away to avoid this :-).
+
+# vim:tw=80:
