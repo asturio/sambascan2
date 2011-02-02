@@ -17,12 +17,14 @@
 # this program; if not, write to the Free Software Foundation, Inc., 59 Temple
 # Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# TODO: Isn't nmap to agresive?
-# TODO: rename sambascan2.in in sambascan2.sh and make in configure.ac this as input for sambascan2
 # TODO: Multithreading
 # TODO: Add share auth support.
+# TODO: Resume mode: if a host was already scanned, just continue with the next host. Usefull for big nets.
+##############
+# TODO: Isn't nmap to agresive?
+# TODO: rename sambascan2.in in sambascan2.sh and make in configure.ac this as input for sambascan2
 # TODO: Use sqlite
-# TODO: Makefile.am test debian targets
+# TODO: Makefile.am test debian targets, test DH_ALWAYS_EXCLUDE
 
 #set -x
 
@@ -47,10 +49,11 @@ function display() {
     REST="$@"
     if [ -n "$LEVEL" -a "$LEVEL" -le "$INFOLEVEL" ]
     then
-        [ "$LEVEL" -eq 0 ] && echo -n "[ERROR] " 1>&2 
-        [ "$LEVEL" -eq 1 ] && echo -n "[ WARN] " 1>&2
-        [ "$LEVEL" -eq 2 ] && echo -n "[ INFO] " 
-        [ "$LEVEL" -eq 3 ] && echo -n "[DEBUG] " 
+        DATE="`date`|"
+        [ "$LEVEL" -eq 0 ] && echo -n "[${DATE}ERROR] " 1>&2 
+        [ "$LEVEL" -eq 1 ] && echo -n "[${DATE} WARN] " 1>&2
+        [ "$LEVEL" -eq 2 ] && echo -n "[${DATE} INFO] " 
+        [ "$LEVEL" -eq 3 ] && echo -n "[${DATE}DEBUG] " 
         if [ $LEVEL -lt 2 ]
         then
             echo $REST 1>&2
@@ -351,7 +354,6 @@ function list_shares {
     else
         display 3 "= Host $MYNAME ($MYIP): no shares or no access."
     fi
-    #reset -Q
 }
 
 function getlistofhosts {
@@ -426,12 +428,12 @@ function getoldhosts {
 }
 
 function process_host {
-        NAME=`nmblookup -A $1 | $GREP "-" | head -1 | cut -f 1 -d"<"`
-        NAME=`echo $NAME`
-# Only Modify this section, if you know what you are doing.
-# Insert your ACTION code here (e.g. scan for viruses)
-# I will only list the shares
-        list_shares "$1" "$NAME"
+    NAME=`nmblookup -A $1 | $GREP "-" | head -1 | cut -f 1 -d"<"`
+    NAME=`echo $NAME`
+    # Only Modify this section, if you know what you are doing.
+    # Insert your ACTION code here (e.g. scan for viruses)
+    # I will only list the shares
+    list_shares "$1" "$NAME" 
 }
 
 #### The Prog #####
@@ -460,7 +462,7 @@ do
     process_host $i
 done
 # Kill forgotten sleeps
-for i in `ps -ef 2> /dev/null | $GREP "sleep 120" | $GREP -v grep | $AWK '{print $2}'`
+for i in `ps -ef 2> /dev/null | $GREP "sleep $TIMEOUT" | $GREP -v grep | $AWK '{print $2}'`
 do
     kill $i
 done
