@@ -1,0 +1,29 @@
+claudio@thorion:~/proj/sambascan2$ ./sambascan2.sh 192.168.0.0/25
+sambascan2 Version: 0.3.6 (c) Claudio Clemens
+
+Getting list of hosts from net ==> 192.168.0.0/25 <==
+  Host: SEATTLE (192.168.0.1) ... Working on SEATTLE: (homes software netlogon).
+     Listing +(homes)... no access.
+     Listing +(software)... no access.
+     Listing +(netlogon)... no access.
+  Host:  (192.168.0.4)  ... No Shares.
+  Host: PHOENIX (192.168.0.16)  ... No Shares.
+  Host:  (192.168.0.17)  ... No Shares.
+  Host: VDR (192.168.0.29) ... Working on VDR: (print$ video).
+     Listing +(print$)... no access.
+     Listing +(video)... done.
+  Host:  (192.168.0.30)  ... No Shares.
+  Host: ARBEITSMUEHLE (192.168.0.42)  ... No Shares.
+  Host:  (192.168.0.111)  ... No Shares.
+claudio@thorion:~/proj/sambascan2$ ./sambascan2.sh --sname "(debian|mp3)"
+sambascan2 Version: 0.3.6 (c) Claudio Clemens
+
+Searching files:
+192.168.0.29:video:/backup/etc/:debian_version:4
+192.168.0.29:video:/backup/etc/alternatives/:mp3-decoder.1.gz:2699
+192.168.0.29:video:/backup/etc/alternatives/:mp3-decoder:38712
+192.168.0.29:video:/backup/etc/dpkg/origins/:debian:83
+192.168.0.29:video:/backup/etc/terminfo/x/:xterm-debian:2126
+192.168.0.29:video:/backup/etc/vdr/plugins/:mp3sources.conf:49
+192.168.0.29:video:/backup/etc/vdr/plugins/:plugin.mp3.conf:36
+192.168.0.29:video:/backup/etc/vdr/vdrconvert/:vdrconvert.mp3.conf:362

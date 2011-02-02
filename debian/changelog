@@ -1,0 +1,17 @@
+sambascan2 (0.5.0) stable; urgency=medium
+
+  * New upstream version. Lots of changes.
+
+ -- Claudio André Till Clemens <asturioweb@gmx.net>  Wed, 02 Feb 2011 09:00:00 +0100
+
+sambascan2 (0.4.2) stable; urgency=medium
+
+  * Fixed Bug scanning shares with spaces in the names.
+
+ -- Claudio André Till Clemens <asturioweb@gmx.net>  Tue, 30 Nov 2009 22:00:00 +0100
+
+sambascan2 (0.4.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Claudio André Till Clemens <asturioweb@gmx.net>  Tue, 11 Dec 2007 20:25:52 +0100

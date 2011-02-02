@@ -1,0 +1,16 @@
+Source: sambascan2
+Section: net
+Priority: extra
+Maintainer: Claudio André Till Clemens <asturioweb@gmx.net>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.3
+
+Package: sambascan2
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, nmap, smbclient
+Description: Scans networks for windows/SMB/samba shares
+ sambascan2 is a simple script to scan windows shares in SMB networks. It's
+ main goal is to index all public files in a windows network. The indexed files
+ can then be searched. Sambascan2 can also search for files in protected
+ shares, if you save the account information in a configuration file. All
+ options are used from the command line.
