@@ -564,10 +564,10 @@ uninstall-man: uninstall-man1
 all: sambascan2
 	chmod a+x sambascan2
 
-debian:
+deb:
 	debuild
 
-debian-clean:
+deb-clean:
 	debuild clean
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
