@@ -6,8 +6,8 @@ EXTRA_DIST=sambascan2
 all: sambascan2
 	chmod a+x sambascan2
 
-debian:
+deb:
 	debuild
 
-debian-clean:
+deb-clean:
 	debuild clean

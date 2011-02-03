@@ -5,3 +5,13 @@ Debian packages are in /debian.
 
 What is new in Version 0.5.0 (2011-02-02)
 =========================================
+- Debug Variable deleted.
+- Major changes in the output. The output behavior can be controlled with -V.
+- Added flag for skipping hidden shares like C$ and D$.
+- Added getopt options parsing.
+- Parsing of auth options changed for option -a, -d and -g.
+- Output less errors, if commands fail.
+- Temporary files are now uniq.
+- Scan port 445 too.
+- Added generic auth support (using same login and password for all hosts/shares).
+- Fixed some bugs.

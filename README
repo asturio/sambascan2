@@ -15,7 +15,7 @@ A: You are probably trying to scan in a private share. sambascan2 was only
 
 Edited (2007-05-17): With version 0.4.0 you can add login information to
 sambascan2. It is not a very elegant way of scanning password protected shares,
-but it is one way. Note that the password will be save as plaintext and that
+but it is one way. Note that the password will be saved in plaintext and that
 anyone logged in your computer could discover that password at runtime using: 
 
 ps -ef | grep smbclient

@@ -1,4 +1,10 @@
-2011-02-02 Claudio André Till Clemens <asturio@gmx.net>
+2011-02-03 Claudio André Till Clemens <asturioweb@gmx.net>
+	* all: updated email address.
+	* Makefile.am: renamed debian target to deb.
+	* NEWS: Updated.
+	* output.txt: deleted.
+
+2011-02-02 Claudio André Till Clemens <asturioweb@gmx.net>
 	* sambascan2.in: More todos added. Removed "DEBUG" Variable. Better
 	handling of shares with spaces. Count old hosts. Added Date to output.
 	Code cleanup. Kill stale sleeps.
@@ -6,7 +12,7 @@
 	* configure.ac: Update version to -dev
 	* ChangeLog: Updated.
 
-2011-02-01 Claudio André Till Clemens <asturio@gmx.net>
+2011-02-01 Claudio André Till Clemens <asturioweb@gmx.net>
 	* sambascan2.in: Final changes for 0.5.0. Comment and code cleanup.
 	More todos added in code. Added package and author variables. Use
 	single files for scanning (first step to threaded scan?). Output
@@ -18,7 +24,7 @@
 	* NEWS: Updated.
 	* sambascan2.1: Updated.
 
-2011-01-31 Claudio André Till Clemens <asturio@gmx.net>
+2011-01-31 Claudio André Till Clemens <asturioweb@gmx.net>
 	* all: Lots ot changes not writen in the changelog by now. From r6-r15
 	* sambascan2.in: Updated year in copyright. Todos added. display
 	function added. Output now with display function. Using getopt (intro-
@@ -29,24 +35,24 @@
 	* configure.ac: Changed version to 0.5.0. Regenerated autotool files.
 	* sambascan2.1: Corrected typos in manpage. Added infos for -V.
 
-2009-11-18 Claudio André Till Clemens <asturio@gmx.net>
+2009-11-18 Claudio André Till Clemens <asturioweb@gmx.net>
         * sambascan2.in: Corrected Typo. Fixed finding share-names with spaces,
           fixed "-l" with empty file.
         * configure.ac: Update version number.
 
-2007-12-11 Claudio André Till Clemens <asturio@gmx.net>
+2007-12-11 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* sambascan2.1: Added man page
 	* sambascan2.in: Added "version" parameter
 
-2007-12-07 Claudio André Till Clemens <asturio@gmx.net>
+2007-12-07 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.4.1
 	* Moved ~/samba directory to ~/.sambascan2
 	* Added -l option to search in IPs given in a file
 	* Remove old files in WORKDIR
 
-2007-05-17 Claudio André Till Clemens <asturio@gmx.net>
+2007-05-17 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.4.0
 	* sambascan2.sh: Added capability to scan hosts using a password.
@@ -63,7 +69,7 @@
 	sambascan2.
 	* ChangeLog: Changed format of changelog.
 
-2005-04-24 Claudio André Till Clemens <asturio@gmx.net>
+2005-04-24 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.3.6
 	* sambascan2.sh: Cleaned some glichies of using Samba 3 (too much
@@ -74,30 +80,30 @@
 	    --sizemin	- Minimum size for searches
 	    --sizemax	- Maximum size for searches
 
-2004-03-23 Claudio André Till Clemens <asturio@gmx.net>
+2004-03-23 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* sambascan2.sh: Little anoiance fix: older "ps" may throw errors, if
 	the "Kernel version doesn't match data". Any error messages from ps
 	are going to nirvana now.
 
-2004-02-10 Claudio André Till Clemens <asturio@gmx.net>
+2004-02-10 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.3.4
 	* sambascan2.sh: Remove dependency with "timeout", and implemented my
 	own timemout bash variant.
 	* sambascan2.sh: Added more control over error conections
 
-2003-11-05 Claudio André Till Clemens <asturio@gmx.net>
+2003-11-05 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* sambascan2.sh: Minor changes to run with older sed versions.
 
-2003-11-03 Claudio André Till Clemens <asturio@gmx.net>
+2003-11-03 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.3.1
 	* sambascan2.sh: Corrected some minor bugs and changed the output
 	format again, so now the list is IP:Share:Path:File:Size
 
-2003-11-01 Claudio André Till Clemens <asturio@gmx.net>
+2003-11-01 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* Version: 0.3.0
 	* sambascan2.sh: Corrected a bug, which didn't detect empty shares.
@@ -105,7 +111,7 @@
 	host, and not per share, anymore.  Changed code to not use nbtscan
 	anymore, using nmblookup instead.
 
-2003-10-21 Claudio André Till Clemens <asturio@gmx.net>
+2003-10-21 Claudio André Till Clemens <asturioweb@gmx.net>
 
 	* sambascan2.sh: Added some code to reduce the number of created
 	files.
