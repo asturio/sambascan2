@@ -1,12 +1,28 @@
-New for version 0.5.0:
+New for version 0.5.1-dev (SVN):
 
-    - Fixed many bugs
-    - Better output and output control
-    - Added verbosity
-    - Better option parsing
-    - Better password handling
-    - Added general password support.
+    - Added time to output.
 
-New for version 0.4.1:
+New for version 0.5.0 (2011-02-02):
+
+    - Debug Variable deleted.
+    - Major changes in the output. The output behavior can be controlled 
+      with -V.
+    - Added flag for skipping hidden shares like C$ and D$.
+    - Added getopt options parsing.
+    - Parsing of auth options changed for option -a, -d and -g.
+    - Output less errors, if commands fail.
+    - Temporary files are now uniq.
+    - Scan port 445 too.
+    - Added generic auth support (using same login and password for all
+      hosts/shares).
+    - Fixed some bugs.
+
+New for version 0.4.2 (2009-11-30):
+    - corrected command for scanning hosts.
+    - fixed some typos and some code cleanup.
+
+New for version 0.4.1 (2009-09-07):
 
     - Added autotools machinery
+
+Older versions not present.

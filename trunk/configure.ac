@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.67])
-AC_INIT([sambascan2],[0.5.1-dev],[asturio@gmx.net])
+AC_INIT([sambascan2],[0.5.1-dev],[asturioweb@gmx.net])
 AM_INIT_AUTOMAKE([-Wall -Werror])
 
 # Checks for programs.
