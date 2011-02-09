@@ -37,7 +37,7 @@ WORKDIR=$HOME/.sambascan2
 PASSWORD=$WORKDIR/logins.txt
 SED="@SED@"
 GREP="@GREP@"
-AWK="@AWK@"
+AWK="`which awk`" # System must provide a valid version of awk. On Debian there is original-awk, mawk and gawk.
 EGREP="@EGREP@"
 TIMEOUT=300 # 5 min listing in a share
 INFOLEVEL=2  # 0 quiet/error, 1 warn, 2 info, 3 debug
@@ -49,7 +49,7 @@ function display() {
     REST="$@"
     if [ -n "$LEVEL" -a "$LEVEL" -le "$INFOLEVEL" ]
     then
-        DATE="`date`|"
+        DATE="`date +"%F %T"`|"
         [ "$LEVEL" -eq 0 ] && echo -n "[${DATE}ERROR] " 1>&2 
         [ "$LEVEL" -eq 1 ] && echo -n "[${DATE} WARN] " 1>&2
         [ "$LEVEL" -eq 2 ] && echo -n "[${DATE} INFO] " 

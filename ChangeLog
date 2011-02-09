@@ -1,3 +1,6 @@
+2011-02-09 Claudio André Till Clemens <asturioweb@gmx.net>
+	* sambascan2.in: use now awk. Not autoconfigured. Changed date format.
+
 2011-02-03 Claudio André Till Clemens <asturioweb@gmx.net>
 	* all: updated email address.
 	* Makefile.am: renamed debian target to deb.
